@@ -5,22 +5,24 @@ type item = {
 };
 
 type action =
-  | AddItem
+  | AddItem(string)
   | ToggleItem(int);
 
 type state = {items: list(item)};
 
 let str = React.string;
 
+let valueFromEvent = (e): string => e->ReactEvent.Form.target##value;
+
 let lastId = ref(0);
-let newItem = () => {
+let newItem = text => {
   lastId := lastId^ + 1;
-  {id: lastId^, title: "Click a button", completed: true};
+  {id: lastId^, title: text, completed: false};
 };
 
 let reducer = (state, action) => {
   switch (action) {
-  | AddItem => {items: [newItem(), ...state.items]}
+  | AddItem(text) => {items: [newItem(text), ...state.items]}
   | ToggleItem(id) =>
     let items =
       List.map(
@@ -41,6 +43,27 @@ module TodoItem = {
   };
 };
 
+module Input = {
+  type state = string;
+  [@react.component]
+  let make = (~onSubmit) => {
+    let (text, setText) =
+      React.useReducer((_oldText, newText) => newText, "");
+    <input
+      value=text
+      type_="text"
+      placeholder="Write something to do"
+      onChange={e => setText(valueFromEvent(e))}
+      onKeyDown={e =>
+        if (ReactEvent.Keyboard.key(e) == "Enter") {
+          onSubmit(text);
+          setText("");
+        }
+      }
+    />;
+  };
+};
+
 [@react.component]
 let make = () => {
   let ({items}, dispatch) =
@@ -54,9 +77,7 @@ let make = () => {
   <div className="app">
     <div className="title">
       {str("What to do?")}
-      <button onClick={_e => dispatch(AddItem)}>
-        {str("Add something")}
-      </button>
+      <Input onSubmit={text => dispatch(AddItem(text))} />
     </div>
     <div className="items">
       {List.map(
