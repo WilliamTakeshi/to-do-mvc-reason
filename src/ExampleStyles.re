@@ -23,22 +23,4 @@ let style = {j|
     background-color: $reasonReactBlue;
     color: white;
   }
-  .container {
-    margin: 12px 0px;
-    box-shadow: 0px 4px 16px rgb(200, 200, 200);
-    width: 720px;
-    border-radius: 12px;
-    font-family: sans-serif;
-  }
-  .containerTitle {
-    background-color: rgb(242, 243, 245);
-    border-radius: 12px 12px 0px 0px;
-    padding: 12px;
-    font-weight: bold;
-  }
-  .containerContent {
-    background-color: white;
-    padding: 16px;
-    border-radius: 0px 0px 12px 12px;
-  }
 |j};
